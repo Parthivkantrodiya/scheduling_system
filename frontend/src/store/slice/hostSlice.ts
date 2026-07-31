@@ -1,17 +1,32 @@
 import { createSlice } from "@reduxjs/toolkit";
+import type { AvailabilityItem } from "../../service/availabilityApi";
 
-const initialState = {
+interface HostState {
+  availabilityItems: AvailabilityItem[];
+}
 
+const initialState: HostState = {
+  availabilityItems: [],
 };
 
-const hostslice  = createSlice({
+const hostSlice = createSlice({
   name: "hosts",
   initialState,
-  reducers: {},
+  reducers: {
+    setAvailabilityItems: (state, action: { payload: AvailabilityItem[] }) => {
+      state.availabilityItems = action.payload;
+    },
+    addAvailabilityItem: (state, action: { payload: AvailabilityItem }) => {
+      state.availabilityItems = [action.payload, ...state.availabilityItems];
+    },
+    removeAvailabilityItem: (state, action) => {
+  state.availabilityItems = state.availabilityItems.filter(
+    (item) => item._id !== action.payload
+  );
+},
+  },
 });
 
-export const {
+export const { setAvailabilityItems, addAvailabilityItem ,removeAvailabilityItem} = hostSlice.actions;
 
-} = hostslice.actions;
-
-export default hostslice.reducer;
+export default hostSlice.reducer;

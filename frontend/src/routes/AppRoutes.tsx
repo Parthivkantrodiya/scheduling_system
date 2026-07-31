@@ -2,22 +2,15 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import DashboardLayout from "../components/layout/DashboardLayout";
-// import AvailabilityPage from "../pages/availability/AvailabilityPage";
+import AvailabilityPage from "../pages/availability/AvailabilityPage";
 import Login from "../pages/Login";
 import Register from "../pages/register";
+import AuthGuard from "../components/guard/AuthGuard";
 
 const AppRoutes: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* <Route
-          path="/availability"
-          element={
-            <DashboardLayout>
-              <AvailabilityPage />
-            </DashboardLayout>
-          }
-        /> */}
         <Route
           path="/login"
           element={
@@ -26,6 +19,7 @@ const AppRoutes: React.FC = () => {
             </DashboardLayout>
           }
         />
+
         <Route
           path="/register"
           element={
@@ -34,6 +28,17 @@ const AppRoutes: React.FC = () => {
             </DashboardLayout>
           }
         />
+
+        <Route element={<AuthGuard />}>
+          <Route
+            path="/availability"
+            element={
+              <DashboardLayout>
+                <AvailabilityPage />
+              </DashboardLayout>
+            }
+          />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

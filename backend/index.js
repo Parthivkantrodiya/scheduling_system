@@ -6,6 +6,7 @@ import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import connectDB from "./config/db.js";
 import cors from "cors";
+import routes from "./routes/index.js";
 
 const app = express();
 app.use(express.json());
@@ -24,8 +25,9 @@ app.get("/", (req, res) => {
   res.send("Server Running");
 });
 
-app.use("/api/users", userRoutes);
-app.use("/api/auth", authRoutes);
+
+app.use("/api", routes);
+
 
 connectDB();
 

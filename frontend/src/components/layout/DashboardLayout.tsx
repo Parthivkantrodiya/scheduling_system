@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import type { ReactNode } from "react";
 
-import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
@@ -11,7 +10,7 @@ interface DashboardLayoutProps {
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [open, setOpen] = useState<boolean>(false);
-
+  console.log("DashboardLayout open state:", open);
   return (
     <div className="min-h-screen bg-gray-50">
       {/* <Sidebar open={open} setOpen={setOpen} /> */}

@@ -1,13 +1,13 @@
 import { useState } from "react";
+import type { ChangeEvent, FormEvent } from "react";
 
 import Input from "../components/common/Input";
 import Button from "../components/common/Button";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
-import axios from "../api/axios";
 
 const Register = () => {
-    const [loading, setLoading] = useState(false);
+    const [loading] = useState(false);
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -16,14 +16,14 @@ const Register = () => {
         password: "",
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value,
         });
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
         try {
