@@ -6,6 +6,7 @@ import AvailabilityPage from "../pages/availability/AvailabilityPage";
 import Login from "../pages/Login";
 import Register from "../pages/register";
 import AuthGuard from "../components/guard/AuthGuard";
+import PublicBookingPage from "../pages/public/PublicBookingPage";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -39,6 +40,8 @@ const AppRoutes: React.FC = () => {
             }
           />
         </Route>
+
+        <Route path="/book/:slug" element={<PublicBookingPage />} />
       </Routes>
     </BrowserRouter>
   );

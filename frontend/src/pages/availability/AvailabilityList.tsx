@@ -1,19 +1,16 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 
 import Card from "../../components/common/Card";
-import type { RootState } from "../../store/store";
-import { deleteAvailability } from "../../service/availabilityApi";
-import { removeAvailabilityItem } from "../../store/slice/hostSlice";
+import { deleteAvailability, type AvailabilityItem } from "../../service/availabilityApi";
 import { generateBookingLink } from "../../service/userApi";
 
-const AvailabilityList: React.FC = () => {
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+interface AvailabilityListProps {
+  items: AvailabilityItem[];
+  onDelete?: (id?: string) => void;
+}
 
-  const items = useSelector(
-    (state: RootState) => state.hosts.availabilityItems,
-  );
-  const dispatch = useDispatch();
+const AvailabilityList: React.FC<AvailabilityListProps> = ({ items, onDelete }) => {
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const [bookingLink, setBookingLink] = useState("");
   const [loading, setLoading] = useState(false);
@@ -34,7 +31,9 @@ const AvailabilityList: React.FC = () => {
 
       await deleteAvailability(id);
 
-      dispatch(removeAvailabilityItem(id));
+      if (onDelete) {
+        onDelete(id);
+      }
     } catch (error) {
       console.error(error);
     } finally {

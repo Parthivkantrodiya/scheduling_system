@@ -48,14 +48,5 @@ const availabilitySchema = new mongoose.Schema(
   }
 );
 
-availabilitySchema.index(
-  {
-    user: 1,
-    date: 1,
-  },
-  {
-    unique: true,
-  }
-);
 
 export default mongoose.model("Availability", availabilitySchema);

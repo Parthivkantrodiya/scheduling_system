@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 
 import Card from "../../components/common/Card";
 import Button from "../../components/common/Button";
@@ -14,10 +13,12 @@ import {
   type AvailabilityItem,
   type AvailabilityPayload,
 } from "../../service/availabilityApi";
-import { addAvailabilityItem } from "../../store/slice/hostSlice";
 
-const AvailabilityForm: React.FC = () => {
-  const dispatch = useDispatch();
+interface AvailabilityFormProps {
+  onSaved?: (items: AvailabilityItem[]) => void;
+}
+
+const AvailabilityForm: React.FC<AvailabilityFormProps> = ({ onSaved }) => {
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
 
   const [startTime, setStartTime] = useState("09:00");
@@ -44,15 +45,19 @@ const AvailabilityForm: React.FC = () => {
 
     while (start < end) {
       const slotStart = new Date(start);
+      const slotEnd = new Date(start);
+      slotEnd.setMinutes(slotEnd.getMinutes() + duration);
 
-      start.setMinutes(start.getMinutes() + duration);
+      const nextTime = slotEnd > end ? end : slotEnd;
 
-      if (start <= end) {
+      if (nextTime > slotStart) {
         slots.push({
           startTime: slotStart.toTimeString().slice(0, 5),
-          endTime: start.toTimeString().slice(0, 5),
+          endTime: nextTime.toTimeString().slice(0, 5),
         });
       }
+
+      start = nextTime;
     }
 
     return slots;
@@ -110,16 +115,25 @@ const AvailabilityForm: React.FC = () => {
 
     try {
       const response = await createAvailability(data);
-      const savedItem = response?.data ?? {
+      const payload = response?.data ?? response ?? {
         ...data,
         createdAt: new Date().toISOString(),
       };
 
-      dispatch(addAvailabilityItem(savedItem as AvailabilityItem));
+      const savedItems = Array.isArray(payload) ? payload : [payload];
+
+      if (onSaved) {
+        onSaved(savedItems as AvailabilityItem[]);
+      }
+
       alert("Availability created successfully!");
-    } catch (error) {
-      console.error(error);
-      alert("Failed to create availability.");
+    } catch (error:any) {
+     const message =
+    error.response?.data?.message || 
+    error.message || 
+    "Failed to create availability";
+
+  alert(message);
     }
   };
 

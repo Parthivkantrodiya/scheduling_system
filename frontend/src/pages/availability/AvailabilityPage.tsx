@@ -1,27 +1,26 @@
-import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import React, { useState } from "react";
 
 import AvailabilityForm from "./AvailabilityForm";
 import AvailabilityList from "./AvailabilityList";
-import { getAvailability } from "../../service/availabilityApi";
-import { setAvailabilityItems } from "../../store/slice/hostSlice";
+import type { AvailabilityItem } from "../../service/availabilityApi";
 
 const AvailabilityPage: React.FC = () => {
-  const dispatch = useDispatch();
+  const [availabilityList, setAvailabilityList] = useState<AvailabilityItem[]>([]);
 
-  useEffect(() => {
-    const loadItems = async () => {
-      try {
-        const response = await getAvailability();
-        const fetchedItems = response?.data ?? [];
-        dispatch(setAvailabilityItems(fetchedItems));
-      } catch (error) {
-        console.error("Failed to load availability", error);
-      }
-    };
+  const handleAddAvailability = (items: AvailabilityItem[]) => {
+    const uniqueItems = items.filter((item) => {
+      const id = item._id;
+      return !id || !availabilityList.some((existing) => existing._id === id);
+    });
 
-    loadItems();
-  }, [dispatch]);
+    setAvailabilityList((prev) => [...uniqueItems, ...prev]);
+  };
+
+  const handleDeleteAvailability = (id?: string) => {
+    if (!id) return;
+
+    setAvailabilityList((prev) => prev.filter((item) => item._id !== id));
+  };
 
   return (
     <div className="space-y-6">
@@ -30,9 +29,9 @@ const AvailabilityPage: React.FC = () => {
         <p className="text-gray-500">Manage your available booking slots</p>
       </div>
 
-      <AvailabilityForm />
+      <AvailabilityForm onSaved={handleAddAvailability} />
 
-      <AvailabilityList />
+      <AvailabilityList items={availabilityList} onDelete={handleDeleteAvailability} />
     </div>
   );
 };
