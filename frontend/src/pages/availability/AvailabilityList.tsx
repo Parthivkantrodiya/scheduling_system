@@ -3,10 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Card from "../../components/common/Card";
 import type { RootState } from "../../store/store";
-
 import { deleteAvailability } from "../../service/availabilityApi";
-
 import { removeAvailabilityItem } from "../../store/slice/hostSlice";
+import { generateBookingLink } from "../../service/userApi";
 
 const AvailabilityList: React.FC = () => {
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -15,6 +14,9 @@ const AvailabilityList: React.FC = () => {
     (state: RootState) => state.hosts.availabilityItems,
   );
   const dispatch = useDispatch();
+
+  const [bookingLink, setBookingLink] = useState("");
+  const [loading, setLoading] = useState(false);
 
   if (!items.length) {
     return (
@@ -37,6 +39,22 @@ const AvailabilityList: React.FC = () => {
       console.error(error);
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  const handleGenerateLink = async () => {
+    try {
+      setLoading(true);
+
+      const response = await generateBookingLink();
+
+      setBookingLink(response.data.bookinglink);
+    } catch (error) {
+      console.error(error);
+
+      alert("Failed to generate booking link");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -75,6 +93,73 @@ const AvailabilityList: React.FC = () => {
             </button>
           </div>
         ))}
+      </div>
+      <div className="mt-5 mb-5 flex justify-end">
+        <button
+          onClick={handleGenerateLink}
+          disabled={loading}
+          className="
+    bg-blue-600
+    text-white
+    px-5
+    py-2
+    rounded-lg
+    hover:bg-blue-700
+    disabled:opacity-50
+  "
+        >
+          {loading ? "Generating..." : "Generate Booking Link"}
+        </button>
+
+        {bookingLink && (
+          <div
+            className="
+mt-4
+p-4
+bg-gray-100
+rounded-lg
+"
+          >
+            <p className="font-semibold">Your Booking Link</p>
+
+            <div
+              className="
+flex
+gap-3
+items-center
+mt-2
+"
+            >
+              <input
+                readOnly
+                value={bookingLink}
+                className="
+flex-1
+border
+rounded
+px-3
+py-2
+"
+              />
+
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(bookingLink);
+                  alert("Copied!");
+                }}
+                className="
+bg-gray-800
+text-white
+px-4
+py-2
+rounded
+"
+              >
+                Copy
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </Card>
   );

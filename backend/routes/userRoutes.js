@@ -7,11 +7,15 @@ import express from "express";
 import { registerUser ,  getUsers,
   getUserById,
   updateUser,
-  deleteUser} from "../controllers/userControllers.js";
+  deleteUser,
+  generateBookingLink} from "../controllers/userControllers.js";
+import { authMiddleware } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 // Register User
 router.post("/register", registerUser);
+
+router.get("/generate-link", authMiddleware, generateBookingLink);
 
 // Get all users
 router.get("/", getUsers);
@@ -24,6 +28,8 @@ router.put("/:id", updateUser);
 
 // Delete user
 router.delete("/:id", deleteUser);
+
+
 
 
 export default router;

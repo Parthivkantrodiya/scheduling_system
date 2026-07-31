@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema(
       minlength: 6,
       select: false, // Exclude password from query results by default
     },
+
+    publicBookingId: {
+      type: String,
+    },
   },
   {
     timestamps: true,

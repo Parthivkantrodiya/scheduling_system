@@ -75,3 +75,16 @@ export const deleteUser = async (req, res) => {
     });
   }
 };
+
+
+export const generateBookingLink = async (req, res) => {
+  try {
+const bookinglink = await    userService.generateBookingLink(req)
+    console.log(req.user);
+    res.status(200).json({ message: "Booking link generated successfully", bookinglink });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};

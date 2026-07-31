@@ -1,5 +1,6 @@
 import User from "../model/userModel.js";
 import bcrypt from "bcrypt";
+import { nanoid } from "nanoid";
 
 // Create User
 export const createUser = async (userData) => {
@@ -66,3 +67,30 @@ export const deleteUser = async (id) => {
 
   return user;
 };
+
+export const generateBookingLink = async (req) => {
+        const userId = req.user.id;
+        const user = await User.findById(userId);
+
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        // Create public id if not already present
+        if (!user.publicBookingId) {
+            user.publicBookingId = nanoid(12);
+            await user.save();
+        }
+
+        const username = user.name
+            .toLowerCase()
+            .trim()
+            .replace(/\s+/g, "-");
+
+           const bookingLink =
+      `${process.env.Web_URL}/book/${username}-${user.publicBookingId}`;
+
+
+      return  bookingLink;
+
+};  
